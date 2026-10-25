@@ -1,0 +1,47 @@
+name: Actualizar subastas reales
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 6 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: actualizar-subastas
+  cancel-in-progress: false
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Ejecutar recopilador
+        run: python recopilador_subastas.py
+
+      - name: Comprobar archivos generados
+        run: |
+          echo "Archivos disponibles:"
+          find data -maxdepth 2 -type f -print || true
+
+      - name: Publicar datos actualizados
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if ! git diff --cached --quiet; then
+            git commit -m "Actualizar datos de subastas"
+            git push
+          else
+            echo "No hay datos nuevos que publicar"
+          fi
