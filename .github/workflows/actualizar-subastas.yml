@@ -27,7 +27,7 @@ jobs:
           python-version: '3.11'
 
       - name: Ejecutar recopilador
-        run:python recopilador_subastas.py
+        run: python recopilador_subastas.py actualizar
 
       - name: Comprobar archivos generados
         run: |
