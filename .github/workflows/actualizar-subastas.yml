@@ -38,7 +38,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/
+         if [ -d data ]; then git add data/; else echo "No existe la carpeta data: no hay archivos para publicar"; fi/
           if ! git diff --cached --quiet; then
             git commit -m "Actualizar datos de subastas"
             git push
